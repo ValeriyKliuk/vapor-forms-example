@@ -21,5 +21,6 @@ final class Routes: RouteCollection {
             return req.description
         }
         
+        UserController(view: view).addRoutes(to: builder)
     }
 }

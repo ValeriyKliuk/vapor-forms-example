@@ -60,3 +60,15 @@ extension User: Preparation {
         try database.delete(self)
     }
 }
+
+extension User: NodeRepresentable {
+    func makeNode(in context: Context?) throws -> Node {
+        let dict = try [
+            Field.id: id.makeNode(in: context),
+            Field.name: name.makeNode(in: context),
+            Field.email: email.makeNode(in: context),
+            Field.avatarURL: avatarURL.absoluteString.makeNode(in: context),
+            ]
+        return try Node(node: dict)
+    }
+}

@@ -1,0 +1,27 @@
+#extend("base")
+
+#export("title") { Edit Profile }
+
+#export("content") {
+  <form action="" method="POST">
+    <div>
+      <label for="name">Name</label>
+    </div>
+    <div>
+      <input type="text" name="name" value="#(user.name)" />
+    </div>
+    <div>
+      <label for="email">Email</label>
+    </div>
+    <div>
+      <input type="text" name="email" value="#(user.email)" />
+    </div>
+    <div>
+      <label for="avatar_url">Avatar URL</label>
+    </div>
+    <div>
+      <input type="text" name="avatar_url" value="#(user.avatar_url)" />
+    </div>
+    <button type="submit">Save</button>
+  </form>
+}
