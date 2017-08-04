@@ -8,25 +8,25 @@
       <label for="name">Name</label>
     </div>
     <div>
-      <input type="text" name="name" value="#(user.name)" />
+      <input type="text" name="name" value="#(form.name)" />
     </div>
-    #if(errors.name) { <div>#(errors.name)</div> }
+    #if(form.errors.name) { <div>#(form.errors.name)</div> }
 
     <div>
       <label for="email">Email</label>
     </div>
     <div>
-      <input type="text" name="email" value="#(user.email)" />
+      <input type="text" name="email" value="#(form.email)" />
     </div>
-    #if(errors.email) { <div>#(errors.email)</div> }
+    #if(form.errors.email) { <div>#(form.errors.email)</div> }
 
     <div>
       <label for="avatar_url">Avatar URL</label>
     </div>
     <div>
-      <input type="text" name="avatar_url" value="#(user.avatar_url)" />
+      <input type="text" name="avatar_url" value="#(form.avatar_url)" />
     </div>
-    #if(errors.avatar_url) { <div>#(errors.avatar_url)</div> }
+    #if(form.errors.avatar_url) { <div>#(form.errors.avatar_url)</div> }
 
     <button type="submit">Save</button>
   </form>

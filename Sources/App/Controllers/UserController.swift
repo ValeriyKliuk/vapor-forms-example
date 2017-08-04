@@ -19,7 +19,8 @@ final class UserController {
         guard let user = try User.find(1) else {
             throw Abort.badRequest
         }
-        return try view.make("profile", ["user": user, "request": request])
+        let form = try UserForm(user: user)
+        return try view.make("profile", ["form": form, "request": request])
     }
     
     func update(_ request: Request) throws -> ResponseRepresentable {
@@ -27,47 +28,11 @@ final class UserController {
             throw Abort.badRequest
         }
         
-        var fields: [String: String] = [:]
-        var errors: [String: String] = [:]
-        
-        fields["name"] = request.data["name"]?.string
-        if fields["name"] == nil {
-            errors["name"] = "Name is required."
-        }
-        
-        fields["email"] = request.data["email"]?.string
-        if let email = fields["email"] {
-            do {
-                try EmailValidator().validate(email)
-            } catch _ as ValidationError {
-                errors["email"] = "Email is not a valid email address."
-            }
-        } else {
-            errors["email"] = "Email is required."
-        }
-        
-        
-        fields["avatar_url"] = request.data["avatar_url"]?.string
-        var avatarURL: URL? = nil
-        if let avatarPath = fields["avatar_url"] {
-            avatarURL = URL(string: avatarPath)
-            if avatarURL == nil {
-                errors["avatar_url"] = "Avatar URL is not a valid URL."
-            }
-        } else {
-            errors["avatar_url"] = "Avatar URL is required."
-        }
-        
-        if errors.isEmpty, let name = fields["name"], let email = fields["email"], let avatarURL = avatarURL {
-            user.name = name
-            user.email = email
-            user.avatarURL = avatarURL
-            
-            try user.save()
-            
+        let form = try UserForm(user: user, valuesFrom: request.data)
+        if try form.save() {
             return Response(status: .seeOther, headers: ["Location": path]).flash(.success, "Saved changes.")
         } else {
-            return try view.make("profile", ["user": fields, "errors": errors])
+            return try view.make("profile", ["form": form, "request": request])
         }
     }
 }
