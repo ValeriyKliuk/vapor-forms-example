@@ -1,27 +1,27 @@
 <!--Error-->
 #if(request.storage._flash.error) {
-  <div>
+  <div class="alert alert-danger" role="alert">
     #(request.storage._flash.error)
   </div>
 }
 
 <!--Success-->
 #if(request.storage._flash.success) {
-  <div>
+  <div class="alert alert-success" role="alert">
     #(request.storage._flash.success)
   </div>
 }
 
 <!--Warning-->
 #if(request.storage._flash.warning) {
-  <div>
+  <div class="alert alert-warning" role="alert">
     #(request.storage._flash.warning)
   </div>
 }
 
 <!--Info-->
 #if(request.storage._flash.info) {
-  <div>
+  <div class="alert alert-info" role="alert">
     #(request.storage._flash.info)
   </div>
 }

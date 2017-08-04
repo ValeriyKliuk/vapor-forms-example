@@ -2,13 +2,16 @@
 <html>
 <head>
 	<title>#import("title")</title>
+  <link rel="stylesheet" href="/styles/bootstrap.min.css">
 	<link rel="stylesheet" href="/styles/app.css">
 </head>
 <body>
 
-#embed("flash")
+<div class="container">
+  #embed("flash")
 
-#import("content")
+  #import("content")
+</div>
 
 </body>
 </html>
