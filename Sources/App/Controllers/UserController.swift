@@ -26,16 +26,17 @@ final class UserController {
         guard let user = try User.find(1) else {
             throw Abort.badRequest
         }
-
+        
+        var fields: [String: String] = [:]
         var errors: [String: String] = [:]
         
-        let name = request.data["name"]?.string
-        if name == nil {
+        fields["name"] = request.data["name"]?.string
+        if fields["name"] == nil {
             errors["name"] = "Name is required."
         }
         
-        let email = request.data["email"]?.string
-        if let email = email {
+        fields["email"] = request.data["email"]?.string
+        if let email = fields["email"] {
             do {
                 try EmailValidator().validate(email)
             } catch _ as ValidationError {
@@ -45,9 +46,10 @@ final class UserController {
             errors["email"] = "Email is required."
         }
         
-        let avatarPath = request.data["avatar_url"]?.string
+        
+        fields["avatar_url"] = request.data["avatar_url"]?.string
         var avatarURL: URL? = nil
-        if let avatarPath = avatarPath {
+        if let avatarPath = fields["avatar_url"] {
             avatarURL = URL(string: avatarPath)
             if avatarURL == nil {
                 errors["avatar_url"] = "Avatar URL is not a valid URL."
@@ -56,7 +58,7 @@ final class UserController {
             errors["avatar_url"] = "Avatar URL is required."
         }
         
-        if errors.isEmpty, let name = name, let email = email, let avatarURL = avatarURL {
+        if errors.isEmpty, let name = fields["name"], let email = fields["email"], let avatarURL = avatarURL {
             user.name = name
             user.email = email
             user.avatarURL = avatarURL
@@ -65,7 +67,7 @@ final class UserController {
             
             return Response(status: .seeOther, headers: ["Location": path]).flash(.success, "Saved changes.")
         } else {
-            return try view.make("profile", ["user": user, "errors": errors])
+            return try view.make("profile", ["user": fields, "errors": errors])
         }
     }
 }
