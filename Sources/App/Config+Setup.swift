@@ -1,5 +1,6 @@
 import LeafProvider
 import PostgreSQLProvider
+import Flash
 
 extension Config {
     public func setup() throws {
@@ -9,7 +10,7 @@ extension Config {
 
         try setupProviders()
         try setupPreparations()
-
+        try setupMiddleware()
     }
     
     /// Configure providers
@@ -22,5 +23,9 @@ extension Config {
     /// schemas prepared before the app boots
     private func setupPreparations() throws {
         preparations.append(User.self)
+    }
+    
+    private func setupMiddleware() throws {
+        addConfigurable(middleware: FlashMiddleware(), name: "flash")
     }
 }

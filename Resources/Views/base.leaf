@@ -6,6 +6,8 @@
 </head>
 <body>
 
+#embed("flash")
+
 #import("content")
 
 </body>

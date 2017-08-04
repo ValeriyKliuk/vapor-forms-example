@@ -15,8 +15,10 @@ final class UserController {
     }
     
     func edit(_ request: Request) throws -> ResponseRepresentable {
-        let user = try User.find(1)
-        return try view.make("profile", ["user": user])
+        guard let user = try User.find(1) else {
+            throw Abort.badRequest
+        }
+        return try view.make("profile", ["user": user, "request": request])
     }
     
     func update(_ request: Request) throws -> ResponseRepresentable {
@@ -34,6 +36,6 @@ final class UserController {
             print("Error: \(String(reflecting: error))")
         }
         
-        return Response(status: .seeOther, headers: ["Location": path])
+        return Response(status: .seeOther, headers: ["Location": path]).flash(.success, "Saved changes.")
     }
 }

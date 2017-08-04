@@ -1,0 +1,27 @@
+<!--Error-->
+#if(request.storage._flash.error) {
+  <div>
+    #(request.storage._flash.error)
+  </div>
+}
+
+<!--Success-->
+#if(request.storage._flash.success) {
+  <div>
+    #(request.storage._flash.success)
+  </div>
+}
+
+<!--Warning-->
+#if(request.storage._flash.warning) {
+  <div>
+    #(request.storage._flash.warning)
+  </div>
+}
+
+<!--Info-->
+#if(request.storage._flash.info) {
+  <div>
+    #(request.storage._flash.info)
+  </div>
+}
