@@ -29,10 +29,11 @@ final class UserController {
         }
         
         let form = try UserForm(user: user, valuesFrom: request.data)
-        if try form.save() {
+        do {
+            try form.save()
             return Response(status: .seeOther, headers: ["Location": path]).flash(.success, "Saved changes.")
-        } else {
-            return try view.make("profile", ["form": form, "request": request])
+        } catch let errors as UserForm.ValidationError {
+            return try view.make("profile", ["form": form, "errors": errors, "request": request])
         }
     }
 }

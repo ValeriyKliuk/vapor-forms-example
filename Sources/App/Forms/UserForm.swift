@@ -7,9 +7,12 @@ final class UserForm {
     fileprivate let name: String?
     fileprivate let email: String?
     fileprivate let avatarURLString: String?
-    fileprivate var errors: [String: String] = [:]
-    
+
     private lazy var emailValidator = EmailValidator()
+
+    struct ValidationError: Error {
+        let errors: [String: String]
+    }
     
     init(user: User) throws {
         self.user = user
@@ -25,8 +28,8 @@ final class UserForm {
         self.avatarURLString = content[Field.avatarURL]?.string
     }
     
-    func save() throws -> Bool {
-        errors = [:]
+    func save() throws {
+        var errors: [String: String] = [:]
         
         if name == nil {
             errors[Field.name] = "Name is required."
@@ -58,11 +61,8 @@ final class UserForm {
             user.avatarURL = avatarURL
             
             try user.save()
-            
-            return true
-
         } else {
-            return false
+            throw ValidationError(errors: errors)
         }
     }
     
@@ -70,7 +70,6 @@ final class UserForm {
         static let name = "name"
         static let email = "email"
         static let avatarURL = "avatar_url"
-        static let errors = "errors"
     }
 }
 
@@ -80,7 +79,12 @@ extension UserForm: NodeRepresentable {
             Field.name: name.makeNode(in: context),
             Field.email: email.makeNode(in: context),
             Field.avatarURL: avatarURLString.makeNode(in: context),
-            Field.errors: errors.makeNode(in: context),
         ])
+    }
+}
+
+extension UserForm.ValidationError: NodeRepresentable {
+    func makeNode(in context: Context?) throws -> Node {
+        return try Node(node: errors)
     }
 }
