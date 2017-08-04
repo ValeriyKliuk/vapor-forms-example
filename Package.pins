@@ -164,6 +164,12 @@
       "version": "2.0.4"
     },
     {
+      "package": "Validation",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor/validation",
+      "version": "1.0.1"
+    },
+    {
       "package": "Vapor",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/vapor.git",

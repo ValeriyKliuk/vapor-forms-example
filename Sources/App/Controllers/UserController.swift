@@ -1,4 +1,5 @@
 import Foundation
+import Validation
 
 final class UserController {
     let view: ViewRenderer
@@ -22,20 +23,49 @@ final class UserController {
     }
     
     func update(_ request: Request) throws -> ResponseRepresentable {
-        guard let user = try User.find(1), let name = request.data["name"]?.string, let email = request.data["email"]?.string, let avatarPath = request.data["avatar_url"]?.string, let avatarURL = URL(string: avatarPath) else {
+        guard let user = try User.find(1) else {
             throw Abort.badRequest
         }
+
+        var errors: [String: String] = [:]
         
-        user.name = name
-        user.email = email
-        user.avatarURL = avatarURL
-        
-        do {
-            try user.save()
-        } catch {
-            print("Error: \(String(reflecting: error))")
+        let name = request.data["name"]?.string
+        if name == nil {
+            errors["name"] = "Name is required."
         }
         
-        return Response(status: .seeOther, headers: ["Location": path]).flash(.success, "Saved changes.")
+        let email = request.data["email"]?.string
+        if let email = email {
+            do {
+                try EmailValidator().validate(email)
+            } catch _ as ValidationError {
+                errors["email"] = "Email is not a valid email address."
+            }
+        } else {
+            errors["email"] = "Email is required."
+        }
+        
+        let avatarPath = request.data["avatar_url"]?.string
+        var avatarURL: URL? = nil
+        if let avatarPath = avatarPath {
+            avatarURL = URL(string: avatarPath)
+            if avatarURL == nil {
+                errors["avatar_url"] = "Avatar URL is not a valid URL."
+            }
+        } else {
+            errors["avatar_url"] = "Avatar URL is required."
+        }
+        
+        if errors.isEmpty, let name = name, let email = email, let avatarURL = avatarURL {
+            user.name = name
+            user.email = email
+            user.avatarURL = avatarURL
+            
+            try user.save()
+            
+            return Response(status: .seeOther, headers: ["Location": path]).flash(.success, "Saved changes.")
+        } else {
+            return try view.make("profile", ["user": user, "errors": errors])
+        }
     }
 }
